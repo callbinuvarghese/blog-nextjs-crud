@@ -1,0 +1,85 @@
+#https://fajarwz.com/blog/simple-full-stack-crud-with-nextjs-14-postgresql-and-prisma/
+#https://github.com/fajarwz/blog-nextjs-crud
+
+➜ nvm alias default lts/hydrogen
+➜  screenshots nvm ls
+->     v18.20.2
+       v20.10.0
+         system
+default -> lts/hydrogen (-> v18.20.2)
+lts/hydrogen -> v18.20.2
+lts/iron -> v20.12.2 (-> N/A)
+
+
+# Created an Next JS application
+➜  npx create-next-app@latest blog-nextjs-crud
+➜  cd blog-nextjs-crud
+➜  npm run dev
+localhost:3000 to see the default UI for nextjs
+
+
+# Init prisma ORM for database access
+➜  npm install prisma --save-dev
+➜  npm prisma init
+➜  ls prisma/schema.prisma
+prisma/schema.prisma
+# Created schema there
+
+# Created a postgresql in Vercel. You can have only one postgres database for free in vercel. Sojust using the one there 
+# Set the connection string copied from Vercel UI to an environment variable
+➜  export POSTGRES_PRISMA_URL="postgres://default:XXXXX@YYYYY.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15"
+
+# set the database connection from the environment from above
+➜  vi prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
+# install the dotenv-cli to take the env variable
+➜   npm install dotenv-cli --include=dev
+
+# Created the database schema. The database must exist. Created a vercel postgres DB earlier from Vercel Browser UI
+➜  npx prisma db push
+# The above step create the database tables from schema.prisma
+
+➜  blog-nextjs-crud psql "postgres://default:XXXX@YYYYY.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
+psql (16.2)
+SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
+Type "help" for help.
+
+verceldb=> \dt
+        List of relations
+ Schema | Name | Type  |  Owner
+--------+------+-------+---------
+ public | Post | table | default
+(1 row)
+
+verceldb=> \q
+
+# Data fetching code
+➜  mkdir db
+➜  mkdir db/queries
+src/db/index.ts
+src/db/queries/posts.ts
+
+➜  mkdir src/components
+src/components/post-delete.tsx      # Components to delete
+src/components/post-form.tsx        # Components to create and edit
+
+# List of posts
+➜  mkdir src/app/posts
+src/app/posts/page.tsx
+
+# Create and Edit page
+➜  mkdir src/app/posts/\[id\]
+➜  mkdir src/app/posts/\[id\]/edit
+➜  mkdir src/app/posts/create
+➜  vi
+src/app/page.tsx
+src/app/posts/create/page.tsx
+rc/app/posts/\[id\]/edit/page.tsx
+
+
+➜  mkdir posts
+➜  npm run dev
